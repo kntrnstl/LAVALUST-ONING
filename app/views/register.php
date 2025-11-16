@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>ONING FLIP - Register</title>
-  <meta content="Restaurant Registration" name="description">
-  <meta content="restaurant, registration, account" name="keywords">
+  <meta content="Shoes Store Registration" name="description">
+  <meta content="shoes store, registration, account" name="keywords">
 
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon">
@@ -14,7 +14,7 @@
 
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Poppins:300,400,500,600" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="<?php echo BASE_URL . PUBLIC_DIR . '/assets/vendor/bootstrap/css/bootstrap.min.css' ?>" rel="stylesheet">
@@ -24,158 +24,233 @@
   <!-- Template Main CSS File -->
   <link href="<?php echo BASE_URL . PUBLIC_DIR . '/assets/css/style.css' ?>" rel="stylesheet">
 
-  <!-- Custom Styles -->
   <style>
-  /* Background (soft gray-green) */
-  body {
-    background: #96A78D;
-    font-family: 'Poppins', sans-serif;
-    color: #0b3d0b;
-  }
+    /* === Background === */
+    body {
+      background: linear-gradient(135deg, #1e3d2f, #2b5e3c, #4caf50);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-  /* Center card vertically */
-  .right-side {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    /* === Main container holding image + form === */
+    .register-wrapper {
+      display: flex;
+      align-items: stretch; /* make both sides equal height */
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      max-width: 1300px;
+      width: 100%;
+      height: 600px;
+    }
 
-  /* Registration card style (dark green container) */
-  .card {
-    background: #043915;
-    color: white;
-    border-radius: 20px;
-    padding: 32px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
+    /* === Left image side === */
+    .left-side {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #2a4d2a; /* green box background */
+      overflow: hidden;
+    }
 
-  /* Title and subtitle */
-  .card-title {
-    font-weight: 600;
-    color: #ffffff !important;
-  }
-  .small, .text-muted {
-    color: #c9ffcc !important;
-  }
+    .left-side img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* show full image without cropping */
+      transition: transform 0.5s ease;
+    }
 
-  /* Input fields */
-  .form-control {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 8px;
-    color: white;
-    height: 50px;
-  }
-  .form-control::placeholder {
-    color: rgba(255,255,255,0.6);
-  }
-  .form-control:focus {
-    background: rgba(255,255,255,0.25);
-    border-color: #9fff9f;
-    box-shadow: 0 0 8px rgba(159,255,159,0.5);
-    color: white;
-  }
+    .left-side img:hover {
+      transform: scale(1.02);
+    }
 
-  /* Checkbox label */
-  .form-check-label {
-    color: white !important;
-  }
+    /* === Right form side === */
+    .right-side {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 50px 40px;
+    }
 
-  /* Clean login/create button */
-  .btn-warning {
-    background: #14532d !important;
-    color: #ffffff !important;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    padding: 12px;
-    transition: 0.2s ease-in-out;
-  }
-  .btn-warning:hover {
-    background: #166534 !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-  }
+    .card {
+      background: transparent;
+      border: none;
+      color: #fff;
+      width: 100%;
+      max-width: 500px;
+    }
 
-  /* Footer links */
-  .footer-links {
-    color: #b3ffb3;
-  }
-  .footer-links:hover {
-    color: #ffffff;
-  }
-</style>
+    .card-title {
+      font-weight: 600;
+      font-size: 26px;
+      color: #d4f1be; /* soft green text */
+    }
 
+    .small.text-muted {
+      color: #b8e0a5 !important;
+    }
+
+    /* === Input fields === */
+    .form-control {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      color: #e8f5e9;
+      padding: 10px 15px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #76c893;
+      box-shadow: 0 0 10px rgba(118, 200, 147, 0.4);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .btn-warning {
+      background: linear-gradient(90deg, #43a047, #81c784);
+      border: none;
+      border-radius: 15px;
+      font-weight: 600;
+      color: #fff;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(67, 160, 71, 0.3);
+    }
+
+    .btn-warning:hover {
+      background: linear-gradient(90deg, #66bb6a, #a5d6a7); /* brighter green on hover */
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(102, 187, 106, 0.6); /* soft green glow */
+      color: #fff; /* text stays white */
+    }
+
+
+    /* === Checkbox & footer === */
+    .form-check-label {
+      color: #d4f1be;
+    }
+
+    .footer-links {
+      color: #a5d6a7;
+      transition: 0.3s ease;
+    }
+
+    .footer-links:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .register-wrapper {
+        flex-direction: column;
+      }
+
+      .left-side {
+        height: 220px;
+      }
+    }
+
+    .password-toggle {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #000; /* black color */
+    font-size: 1.2rem;
+  }
+  </style>
 </head>
 
 <body>
   <main>
-    <div class="container">
-      <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
-        <!-- Left side with image -->
-        <div class="col-lg-6 left-side">
-          <a href="/">
-            <img src="public/img/ONING.jpg" alt="Image" class="img-fluid">
-          </a>
-        </div>
-
-      <!-- Right side with registration form -->
-<div class="col-lg-6 right-side">
-  <div class="card mb-3 mx-auto" style="max-width: 500px; height: auto; padding: 20px;">
-    <div class="card-body" style="padding: 20px;">
-      <div class="pt-3 pb-2">
-        <h5 class="card-title text-center pb-0 fs-4 text-danger"> <a href="/logout" class="nav-item nav-link">Create Account</a>
-        </h5>
-        <p class="text-center small text-muted">Enter your personal details to create an account</p>
+    <div class="register-wrapper">
+      <!-- Left image -->
+      <div class="left-side">
+        <a href="/">
+          <img src="public/img/ONING.jpg" alt="ONING FLIP Image">
+        </a>
       </div>
 
-      <form class="row g-3 needs-validation" novalidate method="post" action="/create">
-        <div class="col-12">
-          <input type="text" name="fullname" class="form-control" id="yourFullname" placeholder="Full Name" required>
-          <div class="invalid-feedback">Please enter your full name!</div>
-        </div>
+      <!-- Right registration form -->
+      <div class="right-side">
+        <div class="card">
+          <div class="card-body">
+            <div class="pt-3 pb-2 text-center">
+              <h5 class="card-title">Create Your Account</h5>
+              <p class="small text-muted">Enter your personal details to register</p>
+            </div>
 
-        <div class="col-12">
-          <input type="text" name="compAdd" class="form-control" id="yourCompAdd" placeholder="Address">
-          <div class="invalid-feedback">Please enter your address!</div>
-        </div>
+            <form class="row g-3 needs-validation" novalidate method="post" action="/create">
+              <div class="col-12">
+                <input type="text" name="fullname" class="form-control" id="yourFullname" placeholder="Full Name" required>
+                <div class="invalid-feedback">Please enter your full name!</div>
+              </div>
 
-        <div class="col-12">
-          <input type="text" name="number" class="form-control" id="yourNumber" placeholder="Phone Number" required>
-          <div class="invalid-feedback">Please enter your phone number!</div>
-        </div>
+              <div class="col-12">
+                <input type="text" name="compAdd" class="form-control" id="yourCompAdd" placeholder="Address">
+                <div class="invalid-feedback">Please enter your address!</div>
+              </div>
 
-        <div class="col-12">
-          <input type="email" name="email" class="form-control" id="yourEmail" placeholder="Your Email" required>
-          <div class="invalid-feedback">Please enter a valid email address!</div>
-        </div>
+              <div class="col-12">
+                <input type="text" name="number" class="form-control" id="yourNumber" placeholder="Phone Number" required>
+                <div class="invalid-feedback">Please enter your phone number!</div>
+              </div>
 
-        <div class="col-12">
-          <input type="password" name="password" class="form-control" id="yourPassword" placeholder="Password" required>
-          <div class="invalid-feedback">Please enter your password!</div>
-        </div>
+              <div class="col-12">
+                <input type="email" name="email" class="form-control" id="yourEmail" placeholder="Your Email" required>
+                <div class="invalid-feedback">Please enter a valid email address!</div>
+              </div>
 
-        <div class="col-12">
-          <button class="btn btn-warning w-100" type="submit">Create Account</button>
+              <div class="col-12 position-relative">
+                <input type="password" name="password" class="form-control" id="yourPassword" placeholder="Password" required>
+                <i class="bi bi-eye-slash password-toggle" id="togglePassword"></i>
+                <div class="invalid-feedback">Please enter your password!</div>
+              </div>
+
+              <div class="col-12">
+                <button class="btn btn-warning w-100" type="submit">Create Account</button>
+              </div>
+              <div class="col-12 text-center">
+                <p class="small mb-0">Already have an account? <a href="/login" class="footer-links">Log in</a></p>
+              </div>
+            </form>
+          </div>
         </div>
-        <div class="col-12">
-          <p class="small mb-0 text-center">Already have an account? <a href="/login" class="footer-links">Log in</a></p>
-        </div>
-      </form>
+      </div>
     </div>
-  </div>
-</div>
-
-
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-    <!-- Vendor JS Files -->
-    <script src="<?php echo BASE_URL . PUBLIC_DIR . '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' ?>"></script>
-    <script src="<?php echo BASE_URL . PUBLIC_DIR . '/assets/js/main.js' ?>"></script>
   </main>
+
+  <!-- Vendor JS Files -->
+  <script src="<?php echo BASE_URL . PUBLIC_DIR . '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' ?>"></script>
+  <script src="<?php echo BASE_URL . PUBLIC_DIR . '/assets/js/main.js' ?>"></script>
+
+  <script>
+  const togglePassword = document.querySelector('#togglePassword');
+  const password = document.querySelector('#yourPassword');
+
+  togglePassword.addEventListener('click', function () {
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    password.setAttribute('type', type);
+    this.classList.toggle('bi-eye');
+    this.classList.toggle('bi-eye-slash');
+  });
+</script>
+
 </body>
 
 </html>

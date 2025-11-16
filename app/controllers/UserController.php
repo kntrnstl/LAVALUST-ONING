@@ -90,7 +90,7 @@ class UserController extends Controller
             if ($user['role'] == 'admin') {
                 redirect('dashboard');  // Redirect to admin dashboard
             } else {
-                redirect('shop');  // Redirect to user dashboard
+                redirect('main');  // Redirect to user dashboard
             }
         } else {
             $this->session->set_flashdata('email_error', 'Invalid email');
@@ -109,6 +109,8 @@ class UserController extends Controller
         }
         $this->call->view('login');
     }
+
+
     public function register()
     {
         $this->call->view('register');

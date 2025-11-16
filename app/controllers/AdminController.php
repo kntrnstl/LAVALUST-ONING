@@ -30,8 +30,11 @@ class AdminController extends Controller
             redirect('login');
         }
         $data['prod'] = $this->Users_model->getInfoo();
+     
         $this->call->view('admin/products', $data);
     }
+
+
     public function add()
     {
         if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
@@ -97,7 +100,44 @@ class AdminController extends Controller
             redirect('login');
         }
         $data['cat'] = $this->Users_model->getCat();
+
+    $data['size'] = $this->db->table('prosize')->get_all() ?: [];
+
         $this->call->view('admin/items', $data);
+    }
+
+    public function addsize()
+    {
+        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
+            redirect('login');
+        }
+
+        // Get POST data directly
+        if (isset($_POST['newsize']) && !empty($_POST['newsize'])) {
+            $newSize = $_POST['newsize'];
+
+            $this->db->table('prosize')->insert(['size' => $newSize]);
+        }
+
+        redirect('items');
+    }
+
+
+    public function delsize($id)
+    {
+        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
+            redirect('login');
+        }
+
+        if (isset($id)) {
+            $this->db->table('prosize')->where("id", $id)->delete();
+            redirect('items');
+        } else {
+            $_SESSION['delete'] = "FAILED";
+            redirect('items');
+        }
+
+        redirect('items');
     }
 
     public function modify()
@@ -218,7 +258,13 @@ class AdminController extends Controller
             redirect('tracking');
         }
     }
-    
+
+    public function sizes()
+    {
+        $data['sizes'] = $this->Size_model->getsize();
+
+        $this->call->view('admin/sizes', $data);
+    }
 }
 
 

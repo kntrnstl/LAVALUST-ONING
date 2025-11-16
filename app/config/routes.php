@@ -84,6 +84,9 @@ $router->get('/modify', 'AdminController::modify');
 $router->post('/save', 'AdminController::add');
 $router->post('/addcat', 'AdminController::addcat');
 $router->get('/delcat/(:num)', 'AdminController::delcat');
+$router->get('sizes', 'AdminController::sizes');
+$router->post('addsize', 'AdminController::addsize');
+$router->get('delsize/(:num)', 'AdminController::delsize');
 
 $router->get('/tracking', 'AdminController::trackModify');
 
@@ -99,3 +102,5 @@ $router->get('/yearlySales', 'ChartsController::yearlySales');
 $router->get('/buwan', 'ChartsController::buwan');
 $router->get('/reports', 'ReportsController::reports');
 $router->post('/downloadReportsPdf', 'ReportsController::downloadReportsPdf');
+
+$router->post('/mail/send', 'mail::send');
