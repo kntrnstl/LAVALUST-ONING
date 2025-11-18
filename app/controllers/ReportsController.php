@@ -15,6 +15,8 @@ class ReportsController extends Controller
         $data['yearly'] = $this->Users_model->getYearlySales();
         $data['weekly'] = $this->Users_model->getWeeklySales();
         $data['overall_sales'] = $this->Users_model->getOverallSales();
+
+        $data['purchase_items'] = $this->Users_model->getSales();
         
         $this->call->view('admin/reports', $data);
     }

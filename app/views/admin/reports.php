@@ -313,6 +313,23 @@
       width: 100%;
     }
   }
+  @media print {
+    #purchaseItemsTable {
+        display: block !important;  /* Always show purchase items table when printing */
+        font-size: 10px !important; /* Smaller font so it fits */
+    }
+
+    /* Hide buttons and unnecessary elements */
+    .btn-green, #showItemsBtn, .breadcrumb, .stats-highlight {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+}
+
 </style>
 
 <body>
@@ -451,6 +468,51 @@
                 </table>
               </div>
 
+              <div id="purchaseItemsTable" style="display:none; margin-top:20px;">
+                <?php
+                $total_sales = 0;
+                foreach($purchase_items as $item) {
+                    $total_sales += $item['total_price'];
+                }
+                ?>
+
+                  <table border="1" cellpadding="5" cellspacing="0" style="font-size:12px; width:100%;">
+                      <thead>
+                          <tr>
+                              <th>ID</th>
+                              <th>Item Name</th>
+                              <th>Customer</th>
+                              <th>Quantity</th>
+                              <th>Price</th>
+                              <th>Total Price</th>
+                              <th>Status</th>
+                              <th>Order Date</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        <?php foreach($purchase_items as $item): ?>
+                        <tr>
+                            <td><?= $item['id'] ?></td>
+                            <td><?= $item['Item_name'] ?></td>
+                            <td><?= $item['Customer'] ?></td>
+                            <td><?= $item['quantity'] ?></td>
+                            <td>₱<?= number_format($item['prize'],2) ?></td>
+                            <td>₱<?= number_format($item['total_price'],2) ?></td>
+                            <td><?= $item['status'] ?></td>
+                            <td><?= $item['order_at'] ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <!-- Total row -->
+                        <tr style="font-weight:bold; background-color:#e8f5e8;">
+                            <td colspan="5" style="text-align:right;">Total Sales:</td>
+                            <td>₱<?= number_format($total_sales, 2) ?></td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tbody>
+
+                  </table>
+              </div>
+
               <!-- Download Form (Hidden) -->
               <form id="downloadForm" method="post" action="/downloadReportsPdf">
                 <input type="hidden" name="today" value="<?= $today ?>">
@@ -462,24 +524,71 @@
 
               <!-- Action Buttons -->
               <div class="d-flex gap-3 mt-4 flex-wrap">
-                <button class="btn-green" type="button" onclick="printPage()">
-                  <i class="bi bi-printer me-2"></i>Print Report
-                </button>
+                  <button id="showItemsBtn" class="btn btn-primary">Show Purchase Items</button>
+                  <button class="btn-green" type="button" onclick="printPage()">
+                      <i class="bi bi-printer me-2"></i>Print Report
+                  </button>
+              </div> 
 
-              </div>
             </div>
           </div>
-
         </div>
       </div>
     </section>
   </main>
 
-  <script>
-    function printPage() {
-      window.print();
-    }
-  </script>
+<script>
+  // Toggle purchase items table visibility
+  document.getElementById('showItemsBtn').addEventListener('click', function() {
+      let table = document.getElementById('purchaseItemsTable');
+      table.style.display = table.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // Print purchase items table
+function printPage() {
+    const table = document.getElementById('purchaseItemsTable');
+
+    // Temporarily show table if hidden
+    const wasHidden = table.style.display === 'none';
+    if (wasHidden) table.style.display = 'block';
+
+    const tableHTML = table.outerHTML;
+
+    const printWindow = window.open('', '_blank');
+
+    const styles = `
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h2 { text-align: center; }
+            table { width: 100%; border-collapse: collapse; font-size: 12px; }
+            th, td { border: 1px solid #000; padding: 5px; text-align: center; }
+            th { background-color: #e8f5e8; color: #145214; font-weight: 600; }
+            @media print {
+                body { margin: 0; }
+                table { page-break-inside: auto; }
+                tr    { page-break-inside: avoid; page-break-after: auto; }
+            }
+        </style>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(`<html><head><title>Purchase Items Report</title>${styles}</head><body>`);
+    printWindow.document.write(`<h2>Purchase Items Report</h2>`);
+    printWindow.document.write(tableHTML);
+    printWindow.document.write(`</body></html>`);
+    printWindow.document.close();
+
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+
+    // Hide table again if it was hidden
+    if (wasHidden) table.style.display = 'none';
+}
+
+</script>
+
+
 
   <?php include('chop/script.php'); ?>
 </body>
