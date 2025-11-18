@@ -524,7 +524,7 @@
 
               <!-- Action Buttons -->
               <div class="d-flex gap-3 mt-4 flex-wrap">
-                  <button id="showItemsBtn" class="btn btn-primary">Show Purchase Items</button>
+                  <button id="showItemsBtn" class="btn-green">Show Purchase Items</button>
                   <button class="btn-green" type="button" onclick="printPage()">
                       <i class="bi bi-printer me-2"></i>Print Report
                   </button>
