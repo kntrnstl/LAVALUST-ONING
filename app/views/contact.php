@@ -518,6 +518,13 @@
                 padding: 15px;
             }
         }
+
+        #leaflet-map {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(11, 61, 11, 0.1);
+            margin-top: 20px;
+            border-radius: 16px;
+        }
     </style>
 </head>
 
@@ -696,6 +703,10 @@
                 <p class="mb-2"><i class="fa fa-phone mr-3"></i>0915 977 2091</p>
                 <p class="mb-0"><i class="fa fa-envelope mr-3"></i>oningflip@gmail.com</p>
             </div>
+            <div class="col-lg-8 col-md-12 mb-5">
+                <h5 class="text-light text-uppercase mb-4">Our Location</h5>
+                <div id="leaflet-map" style="width: 100%; height: 250px; border-radius: 16px; overflow: hidden;"></div>
+            </div>
         </div>
         <div class="row border-top mx-xl-5 py-4">
             <div class="col-md-6 px-xl-0 text-center text-md-left">
@@ -720,6 +731,27 @@
 
     <!-- Template Javascript -->
     <script src="<?php echo BASE_URL . PUBLIC_DIR . '/js/main.js' ?>"></script>
+
+            <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+
+    <script>
+        // Initialize the map
+        var map = L.map('leaflet-map').setView([14.687477150942854, 121.03619090914154], 16);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add a marker
+        var marker = L.marker([14.687477150942854, 121.03619090914154]).addTo(map)
+            .bindPopup('<b>ONING FLIP</b><br>Greenville Drive, Quezon City')
+            .openPopup();
+    </script>
 </body>
 
 </html>
