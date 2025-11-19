@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
     <link href="public/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
@@ -648,22 +648,19 @@
             </div>
             <div class="col-lg-6 text-center text-lg-right">
                 <div class="d-inline-flex align-items-center">
-                    <a class="text-light px-2 social-icon" href="">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a class="text-light px-2 social-icon" href="">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a class="text-light px-2 social-icon" href="">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a class="text-light px-2 social-icon" href="">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a class="text-light pl-2 social-icon" href="">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                </div>
+                <a class="text-light px-2 social-icon" href="https://www.facebook.com/share/1KJgUXNAGH/" target="_blank">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a class="text-light px-2 social-icon" href="https://x.com/FlipOning?t=lRS_tEJgadi81WDS4gv9RQ&s=09" target="_blank">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a class="text-light px-2 social-icon" href="https://www.instagram.com/oning.flip?igsh=ZTczczJmdHV4ZWoy" target="_blank">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a class="text-light px-2 social-icon" href="https://www.tiktok.com/@oning.flip?_r=1&_t=ZS-91X0ZoVgIuF" target="_blank">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+            </div>
             </div>
         </div>
         <div class="row align-items-center py-3 px-xl-5 brand-container">
