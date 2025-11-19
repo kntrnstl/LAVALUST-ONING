@@ -9,29 +9,29 @@ class UserController extends Controller
     }
 
     public function create()
-{
-    // Retrieve input data from POST
-    $email = $this->io->post('email');
-    $password = $this->io->post('password');
-    $fullname = $this->io->post('fullname');
-    $compAdd = $this->io->post('compAdd');
-    $number = $this->io->post('number');
+    {
+        // Retrieve input data from POST
+        $email = $this->io->post('email');
+        $password = $this->io->post('password');
+        $fullname = $this->io->post('fullname');
+        $compAdd = $this->io->post('compAdd');
+        $number = $this->io->post('number');
 
-    // Prepare data array for insertion
-    $data = array(
-        "email" => $email,
-        "password" => password_hash($password, PASSWORD_DEFAULT),
-        "fullname" => $fullname,
-        "compAdd" => $compAdd,
-        "number" => $number
-    );
+        // Prepare data array for insertion
+        $data = array(
+            "email" => $email,
+            "password" => password_hash($password, PASSWORD_DEFAULT),
+            "fullname" => $fullname,
+            "compAdd" => $compAdd,
+            "number" => $number
+        );
 
-    // Insert the user data into the database
-    $this->Users_model->addUser($data);
+        // Insert the user data into the database
+        $this->Users_model->addUser($data);
 
-    // Redirect to the login page
-    redirect('/login');
-}
+        // Redirect to the login page
+        redirect('/login');
+    }
 
    
     public function changePass()
@@ -137,5 +137,90 @@ class UserController extends Controller
             redirect('login');  // Redirect to a default login page
         }
     }
+
+    public function manage()
+    {
+        if ($this->session->userdata('role') != 'admin') {
+            redirect('login');
+        }
+
+        $data['users'] = $this->Users_model->getusers();
+        $this->call->view('admin/users_list', $data);
+    }
+
+    public function addForm()
+{
+    if ($this->session->userdata('role') != 'admin') {
+        redirect('login');
+    }
+
+    $this->call->view('admin/users_add');
+}
+
+public function addUserAdmin()
+{
+    if ($this->session->userdata('role') != 'admin') {
+        redirect('login');
+    }
+
+    $data = [
+        "email" => $this->io->post('email'),
+        "password" => password_hash($this->io->post('password'), PASSWORD_DEFAULT),
+        "fullname" => $this->io->post('fullname'),
+        "compAdd" => $this->io->post('compAdd'),
+        "number" => $this->io->post('number'),
+        "role" => $this->io->post('role')
+    ];
+
+    $this->Users_model->addUser($data);
+
+    redirect('/users');
+}
+
+public function edit($id)
+{
+    if ($this->session->userdata('role') != 'admin') {
+        redirect('login');
+    }
+
+    $data['user'] = $this->Users_model->getUserById($id);
+    $this->call->view('admin/users_edit', $data);
+}
+
+public function update($id)
+{
+    if ($this->session->userdata('role') != 'admin') {
+        redirect('login');
+    }
+
+    $data = [
+        "email" => $this->io->post('email'),
+        "fullname" => $this->io->post('fullname'),
+        "compAdd" => $this->io->post('compAdd'),
+        "number" => $this->io->post('number'),
+        "role" => $this->io->post('role')
+    ];
+
+    // update password only when not empty
+    if (!empty($this->io->post('password'))) {
+        $data["password"] = password_hash($this->io->post('password'), PASSWORD_DEFAULT);
+    }
+
+    $this->db->table('users')->where('id', $id)->update($data);
+
+    redirect('/users');
+}
+
+public function delete($id)
+{
+    if ($this->session->userdata('role') != 'admin') {
+        redirect('login');
+    }
+
+    $this->db->table('users')->where('id', $id)->delete();
+    redirect('/users');
+}
+
+
 }
 ?>

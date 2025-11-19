@@ -51,6 +51,14 @@
       </a>
     </li><!-- Reports -->
 
+    <li class="nav-item" style="margin-bottom:5px;">
+      <a class="nav-link collapsed" href="/admin/users"
+        style="background-color:#0d4a0d; color:#ffffff; display:flex; align-items:center; padding:12px 20px; border-radius:6px; transition:0.3s;">
+        <i class="bi bi-people" style="font-size:18px; margin-right:10px;"></i>
+        <span>User Management</span>
+      </a>
+    </li>
+
   </ul>
 
   <style>

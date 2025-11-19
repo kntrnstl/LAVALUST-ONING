@@ -23,15 +23,17 @@
 
         <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" 
            data-bs-toggle="dropdown" style="text-decoration:none; transition:0.3s;">
-          <span class="d-none d-md-block dropdown-toggle ps-2 text-white fw-semibold">K. Umali</span>
+          <span class="d-none d-md-block dropdown-toggle ps-2 text-white fw-semibold">
+              <?= htmlspecialchars($admin_name ?? 'Admin') ?>
+          </span>
         </a><!-- End Profile Image Icon -->
 
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" 
             style="background-color: #1f2c13; border:none; box-shadow:0 4px 12px rgba(0,0,0,0.3);">
 
           <li class="dropdown-header text-white text-center py-2" style="border-bottom:1px solid #2b3b1a;">
-            <h6 style="margin:0; font-weight:600; color:white;">Kurt Andrei Umali</h6>
-            <span style="font-size:0.85rem; color:#b3d3b3;">Admin</span>
+            <h6 style="margin:0; font-weight:600; color:white;"><?= htmlspecialchars($admin_name ?? 'Admin') ?></h6>
+            <span style="font-size:0.85rem; color:#b3d3b3;"><?= htmlspecialchars($admin_role ?? 'Admin') ?></span>
           </li>
 
           <li><hr class="dropdown-divider" style="margin:8px 0; border-color:#3b5230;"></li>

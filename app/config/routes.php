@@ -104,3 +104,13 @@ $router->get('/reports', 'ReportsController::reports');
 $router->post('/downloadReportsPdf', 'ReportsController::downloadReportsPdf');
 
 $router->post('/mail/send', 'mail::send');
+$router->get('/admin/users', 'AdminController::users');               
+$router->post('/admin/users/add', 'AdminController::addUser');        
+$router->get('/admin/users/edit/(:num)', 'AdminController::editUser'); 
+$router->post('/admin/users/update/(:num)', 'AdminController::updateUser'); 
+$router->get('/admin/users/delete/(:num)', 'AdminController::deleteUser');  
+
+
+$router->get('/admin/users/add', 'UserController::addForm');
+$router->post('/admin/users/add', 'UserController::addUserAdmin');
+

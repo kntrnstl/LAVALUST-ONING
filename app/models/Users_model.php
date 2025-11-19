@@ -208,20 +208,40 @@ class Users_model extends Model {
     {
         return $this->db->table('cart')->where('user_id', $user_id)->get_all();
     }
+
+
+public function getUsersPaginated($limit, $offset)
+{
+    return $this->db->table('users')
+        ->limit($limit, $offset)
+        ->get_all();
+}
+
+public function countUsers()
+{
+    $result = $this->db->raw("SELECT COUNT(*) AS total FROM users");
+    return $result[0]['total'] ?? 0;
+}
+
+public function searchUsers($searchTerm, $limit, $offset)
+{
+    return $this->db->raw("
+        SELECT * FROM users 
+        WHERE fullname LIKE ? OR email LIKE ?
+        ORDER BY id ASC
+        LIMIT ? OFFSET ?
+    ", ["%$searchTerm%", "%$searchTerm%", $limit, $offset]);
+}
+
+public function countSearchUsers($searchTerm)
+{
+    $result = $this->db->raw("
+        SELECT COUNT(*) AS total FROM users 
+        WHERE fullname LIKE ? OR email LIKE ?
+    ", ["%$searchTerm%", "%$searchTerm%"]);
+    return $result[0]['total'] ?? 0;
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 ?>

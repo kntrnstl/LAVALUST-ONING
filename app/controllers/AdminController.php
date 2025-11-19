@@ -3,269 +3,275 @@ defined('PREVENT_DIRECT_ACCESS') or exit('No direct script access allowed');
 
 class AdminController extends Controller
 {
+    protected $admin_name;
+    protected $admin_role;
+
     public function __construct() {
         parent::__construct();
         $this->call->model('Users_model');
+
+        // Get logged-in admin info
+        $admin_id = $this->session->userdata('user_id');
+        $admin = $this->Users_model->getUserById($admin_id);
+
+        $this->admin_name = $admin['fullname'] ?? 'Admin';
+        $this->admin_role = $admin['role'] ?? 'Admin';
     }
 
+    private function adminView($view, $data = []) {
+        // Merge admin info with other data
+        $data['admin_name'] = $this->admin_name;
+        $data['admin_role'] = $this->admin_role;
+        $this->call->view($view, $data);
+    }
 
+    private function checkAdmin() {
+        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
+            redirect('login');
+        }
+    }
+
+    // Dashboard
     public function dashboard()
     {
-        // if (!$this->session->userdata('IsAdmin')) {
-        //     redirect('login');
-        // }
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
-        $data['today'] = $this->Users_model->getTodaySales();
-        $data['monthly'] = $this->Users_model->getMonthlySales();
-        $data['purchase_items'] = $this->Users_model->getSales();
-        $data['Topitems'] = $this->Users_model->topProduct();
-        $data['overall_sales'] = $this->Users_model->getOverallSales();
-        $this->call->view('admin/dashboard', $data);
+        $this->checkAdmin();
+
+        $data = [
+            'today' => $this->Users_model->getTodaySales(),
+            'monthly' => $this->Users_model->getMonthlySales(),
+            'purchase_items' => $this->Users_model->getSales(),
+            'Topitems' => $this->Users_model->topProduct(),
+            'overall_sales' => $this->Users_model->getOverallSales()
+        ];
+
+        $this->adminView('admin/dashboard', $data);
     }
+
+    // Products page
     public function products()
     {
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
+        $this->checkAdmin();
+
         $data['prod'] = $this->Users_model->getInfoo();
-     
-        $this->call->view('admin/products', $data);
+        $this->adminView('admin/products', $data);
     }
 
+    // Items page
+    public function items()
+    {
+        $this->checkAdmin();
 
+        $data['cat'] = $this->Users_model->getCat();
+        $data['size'] = $this->db->table('prosize')->get_all() ?: [];
+        $this->adminView('admin/items', $data);
+    }
+
+    // Add product
     public function add()
     {
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
+        $this->checkAdmin();
+
         $name = $this->io->post('name');
         $description = $this->io->post('description');
         $category = $this->io->post('category');
         $quantity = $this->io->post('quantity');
         $prize = $this->io->post('prize');
 
-
-        // File upload handling
         $uploadDir = 'uploads/';
         $uploadedFile = $_FILES['image']['tmp_name'];
         $imageFileName = uniqid('img_') . '_' . $_FILES['image']['name'];
-        $targetFile = $uploadDir . $imageFileName;
+        move_uploaded_file($uploadedFile, $uploadDir . $imageFileName);
 
-        move_uploaded_file($uploadedFile, $targetFile);
-
-        $bind = array(
+        $bind = [
             "name" => $name,
             "description" => $description,
             "category" => $category,
             "quantity" => $quantity,
             "prize" => $prize,
-            "image" => $imageFileName  // Save the image file name in the database
-        );
+            "image" => $imageFileName
+        ];
 
         $this->db->table('prod')->insert($bind);
-
         redirect('items');
     }
+
+    // Categories
     public function addcat()
     {
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
+        $this->checkAdmin();
+
         $newcat = $this->io->post('newcat');
-        $ins = [
-            'categories' => $newcat
-        ];
-        $this->db->table('cat')->insert($ins);
+        $this->db->table('cat')->insert(['categories' => $newcat]);
         redirect('items');
     }
+
     public function delcat($id)
     {
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
-        if (isset($id)) {
+        $this->checkAdmin();
+
+        if ($id) {
             $this->db->table('cat')->where("id", $id)->delete();
-            redirect('items');
-        } else {
-            $_SESSION['delete'] = "FAILED";
-            redirect('items');
         }
-    }
-
-    public function items()
-    {
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
-        $data['cat'] = $this->Users_model->getCat();
-
-    $data['size'] = $this->db->table('prosize')->get_all() ?: [];
-
-        $this->call->view('admin/items', $data);
-    }
-
-    public function addsize()
-    {
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
-
-        // Get POST data directly
-        if (isset($_POST['newsize']) && !empty($_POST['newsize'])) {
-            $newSize = $_POST['newsize'];
-
-            $this->db->table('prosize')->insert(['size' => $newSize]);
-        }
-
         redirect('items');
     }
 
+    // Sizes
+    public function addsize()
+    {
+        $this->checkAdmin();
+        if (!empty($_POST['newsize'])) {
+            $this->db->table('prosize')->insert(['size' => $_POST['newsize']]);
+        }
+        redirect('items');
+    }
 
     public function delsize($id)
     {
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
-
-        if (isset($id)) {
+        $this->checkAdmin();
+        if ($id) {
             $this->db->table('prosize')->where("id", $id)->delete();
-            redirect('items');
-        } else {
-            $_SESSION['delete'] = "FAILED";
-            redirect('items');
         }
-
         redirect('items');
     }
 
+    // Modify product
     public function modify()
     {
+        $this->checkAdmin();
 
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
         $data['prod'] = $this->Users_model->getInfoo();
         $data['cat'] = $this->Users_model->getCat();
-        $this->call->view('admin/modify', $data);
+        $this->adminView('admin/modify', $data);
     }
-    
+
     public function edit($id)
     {
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
+        $this->checkAdmin();
+
         $data['prod'] = $this->Users_model->getInfoo();
         $data['cat'] = $this->Users_model->getCat();
         $data['edit'] = $this->Users_model->searchInfoo($id);
-        $this->call->view('admin/modify', $data);
+        $this->adminView('admin/modify', $data);
     }
 
     public function submitedit($id)
     {
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
+        $this->checkAdmin();
+
+        $name = $this->io->post('name');
+        $description = $this->io->post('description');
+        $category = $this->io->post('category');
+        $quantity = $this->io->post('quantity');
+        $prize = $this->io->post('prize');
+
+        $data = compact('name', 'description', 'category', 'quantity', 'prize');
+
+        if ($_FILES['image']['size'] > 0) {
+            $uploadDir = 'uploads/';
+            $uploadedFile = $_FILES['image']['tmp_name'];
+            $imageFileName = uniqid('img_') . '_' . $_FILES['image']['name'];
+            move_uploaded_file($uploadedFile, $uploadDir . $imageFileName);
+            $data['image'] = $imageFileName;
         }
 
-        if (isset($id)) {
-            $name = $this->io->post('name');
-            $description = $this->io->post('description');
-            $category = $this->io->post('category');
-            $quantity = $this->io->post('quantity');
-            $prize = $this->io->post('prize');
-
-            // Initialize $imageFileName
-            $imageFileName = null;
-
-            // Check if a new image is uploaded
-            if ($_FILES['image']['size'] > 0) {
-                // File upload handling
-                $uploadDir = 'uploads/';
-                $uploadedFile = $_FILES['image']['tmp_name'];
-                $imageFileName = uniqid('img_') . '_' . $_FILES['image']['name'];
-                $targetFile = $uploadDir . $imageFileName;
-                move_uploaded_file($uploadedFile, $targetFile);
-            }
-
-            // Build the $data array
-            $data = [
-                "name" => $name,
-                "description" => $description,
-                "category" => $category,
-                "quantity" => $quantity,
-                "prize" => $prize,
-            ];
-
-            // Add image to $data if it's set
-            if ($imageFileName !== null) {
-                $data["image"] = $imageFileName;
-            }
-
-            // Update the product data in the database
-            $this->db->table('prod')->where("id", $id)->update($data);
-            redirect('modify');
-        }
+        $this->db->table('prod')->where("id", $id)->update($data);
+        redirect('modify');
     }
-    
+
+    // Tracking
     public function trackModify()
     {
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
+        $this->checkAdmin();
+
         $data['purchase_items'] = $this->Users_model->getSales();
         $data['categories'] = $this->Users_model->getCategories();
-        $this->call->view('admin/tracking', $data);
+        $this->adminView('admin/tracking', $data);
     }
-    
+
     public function trackEdit($id)
     {
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
+        $this->checkAdmin();
+
         $data['purchase_items'] = $this->Users_model->getSales();
         $data['categories'] = $this->Users_model->getCategories();
         $data['trackEdit'] = $this->Users_model->getPurchaseItemById($id);
-        $this->call->view('admin/tracking', $data);
+        $this->adminView('admin/tracking', $data);
     }
-    
+
     public function trackSubmitEdit($id)
     {
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'admin') {
-            redirect('login');
-        }
-    
-        if (isset($id)) {
-            $item_name = $this->io->post('item_name');
-            $customer_id = $this->io->post('customer_id');  // Corrected to match your form
-            $customer = $this->io->post('customer');
-            $quantity = $this->io->post('quantity');
-            $prize = $this->io->post('prize');
-            $status = $this->io->post('status');
-            $total_price = $quantity * $prize;
-    
-            $data = [
-                "Item_name" => $item_name,
-                "CustomerId" => $customer_id,  // Ensure you're using the correct column name
-                "Customer" => $customer,
-                "quantity" => $quantity,
-                "prize" => $prize,
-                "total_price" => $total_price,
-                "status" => $status,
-            ];
-    
-            $this->db->table('purchase_items')->where("id", $id)->update($data);
-            redirect('tracking');
-        }
+        $this->checkAdmin();
+
+        $data = [
+            "Item_name" => $this->io->post('item_name'),
+            "CustomerId" => $this->io->post('customer_id'),
+            "Customer" => $this->io->post('customer'),
+            "quantity" => $this->io->post('quantity'),
+            "prize" => $this->io->post('prize'),
+            "total_price" => $this->io->post('quantity') * $this->io->post('prize'),
+            "status" => $this->io->post('status')
+        ];
+
+        $this->db->table('purchase_items')->where("id", $id)->update($data);
+        redirect('tracking');
     }
 
-    public function sizes()
+    // Users management
+    public function users()
     {
-        $data['sizes'] = $this->Size_model->getsize();
+        $this->checkAdmin();
 
-        $this->call->view('admin/sizes', $data);
+        $users = $this->Users_model->getUsers();
+        $data['users'] = $users;
+        $this->adminView('admin/users_list', $data);
+    }
+
+    public function addUser() {
+        $this->checkAdmin();
+
+        $data = [
+            'email' => $this->io->post('email'),
+            'password' => password_hash($this->io->post('password'), PASSWORD_DEFAULT),
+            'fullname' => $this->io->post('fullname'),
+            'compAdd' => $this->io->post('compAdd'),
+            'number' => $this->io->post('number'),
+            'role' => $this->io->post('role')
+        ];
+
+        $this->Users_model->addUser($data);
+        redirect('/admin/users');
+    }
+
+    public function editUser($id) {
+        $this->checkAdmin();
+
+        $data['user'] = $this->Users_model->getUserById($id);
+        $this->adminView('admin/users_edit', $data);
+    }
+
+    public function updateUser($id) {
+        $this->checkAdmin();
+
+        $data = [
+            'email' => $this->io->post('email'),
+            'fullname' => $this->io->post('fullname'),
+            'compAdd' => $this->io->post('compAdd'),
+            'number' => $this->io->post('number'),
+            'role' => $this->io->post('role')
+        ];
+
+        if (!empty($this->io->post('password'))) {
+            $data['password'] = password_hash($this->io->post('password'), PASSWORD_DEFAULT);
+        }
+
+        $this->db->table('users')->where('id', $id)->update($data);
+        redirect('/admin/users');
+    }
+
+    public function deleteUser($id) {
+        $this->checkAdmin();
+        $this->db->table('users')->where('id', $id)->delete();
+        redirect('/admin/users');
     }
 }
-
-
 ?>
