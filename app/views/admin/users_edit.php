@@ -292,7 +292,7 @@
                   <strong>Contact:</strong> <?= $user['number'] ?>
                 </div>
                 <div class="mb-2">
-                  <strong>Company Address:</strong> <?= $user['compAdd'] ?>
+                  <strong>Address:</strong> <?= $user['compAdd'] ?>
                 </div>
               </div>
             </div>

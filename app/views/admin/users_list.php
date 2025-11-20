@@ -351,7 +351,7 @@
                       <th>Fullname</th>
                       <th>Role</th>
                       <th>Contact</th>
-                      <th>Company Address</th>
+                      <th>Address</th>
                       <th>Action</th>
                     </tr>
                   </thead>
