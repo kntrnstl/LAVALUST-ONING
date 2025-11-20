@@ -742,15 +742,15 @@
                         <h4 class="font-weight-semi-bold m-0">Payment Method</h4>
                     </div>
                     <div class="payment-body">
-<div class="payment-option selected" id="cod-option">
-    <div class="payment-icon">
-        <i class="fas fa-money-bill-wave"></i>
-    </div>
-    <div>
-        <div class="payment-label">Cash on Delivery</div>
-        <div class="payment-description">Pay when you receive your order</div>
-    </div>
-</div>
+                        <div class="payment-option selected" id="cod-option">
+                            <div class="payment-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div>
+                                <div class="payment-label">Cash on Delivery</div>
+                                <div class="payment-description">Pay when you receive your order</div>
+                            </div>
+                        </div>
 
 
                         <div class="payment-option" id="paypal-option">

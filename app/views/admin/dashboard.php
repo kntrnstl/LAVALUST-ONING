@@ -301,7 +301,24 @@
         <div class="col-12">
           <div class="card recent-sales">
             <div class="card-body">
-              <h5 class="card-title">Recent Sales <span class="light-green">Today</span></h5>
+              <h5 class="card-title">
+                Recent Sales <span id="recentFilterLabel" class="light-green">Today</span>
+              </h5>
+
+              <!-- Filter Dropdown -->
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <label style="font-weight:600; color:#145214;">Filter by:</label>
+                
+                <select id="recentFilter" class="form-select" 
+                  style="width:200px; border-color:#145214; background-color:#e8f5e8; color:#145214; font-weight:500;">
+                  <option value="today">Today</option>
+                  <option value="week">This Week</option>
+                  <option value="month">This Month</option>
+                  <option value="year">This Year</option>
+                  <option value="all">Overall</option>
+                </select>
+              </div>
+
               <div class="table-responsive">
                 <table class="table table-borderless">
                   <thead>
@@ -316,13 +333,13 @@
                   </thead>
                   <tbody>
                     <?php foreach ($purchase_items as $g): ?>
-                      <tr>
-                        <td><strong>#<?= $g['purchase_id'] ?></strong></td>
-                        <td><?= $g['Customer'] ?></td>
-                        <td><?= $g['Item_name'] ?></td>
-                        <td><?= $g['quantity'] ?></td>
-                        <td><strong>₱<?= $g['total_price'] ?></strong></td>
-                        <td><?= date('M d, Y h:i A', strtotime($g['order_at'])) ?></td>
+                      <tr data-date="<?= date('Y-m-d', strtotime($g['order_at'])) ?>">
+                          <td><strong>#<?= $g['purchase_id'] ?></strong></td>
+                          <td><?= $g['Customer'] ?></td>
+                          <td><?= $g['Item_name'] ?></td>
+                          <td><?= $g['quantity'] ?></td>
+                          <td><strong>₱<?= $g['total_price'] ?></strong></td>
+                          <td><?= date('M d, Y h:i A', strtotime($g['order_at'])) ?></td>
                       </tr>
                     <?php endforeach ?>
                   </tbody>
@@ -418,5 +435,46 @@
     });
   </script>
 
+
+  <script>
+    const filter = document.getElementById('recentFilter');
+    const rows = document.querySelectorAll('.recent-sales tbody tr');
+
+    filter.addEventListener('change', () => {
+      const period = filter.value;
+      const today = new Date();
+
+      rows.forEach(row => {
+        const rowDate = new Date(row.getAttribute('data-date'));
+        let show = false;
+
+        if (period === "today") {
+          show = rowDate.toDateString() === today.toDateString();
+        } 
+        else if (period === "week") {
+          const weekStart = new Date(today);
+          weekStart.setDate(today.getDate() - today.getDay()); // Sunday
+          const weekEnd = new Date(weekStart);
+          weekEnd.setDate(weekStart.getDate() + 6); // Saturday
+          show = rowDate >= weekStart && rowDate <= weekEnd;
+        } 
+        else if (period === "month") {
+          show = rowDate.getMonth() === today.getMonth() &&
+                rowDate.getFullYear() === today.getFullYear();
+        } 
+        else if (period === "year") {
+          show = rowDate.getFullYear() === today.getFullYear();
+        } 
+        else {
+          show = true; // overall
+        }
+
+        row.style.display = show ? "" : "none";
+      });
+    });
+
+    // Default filter: Today
+    filter.dispatchEvent(new Event('change'));
+  </script>
 </body>
 </html>
