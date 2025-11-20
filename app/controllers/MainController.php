@@ -48,6 +48,7 @@ class MainController extends Controller
 
         $this->call->view('checkout', $data);
     }
+
     public function purchase()
     {
         // Check if the user is logged in
@@ -59,15 +60,18 @@ class MainController extends Controller
             redirect('login');
         }
 
-        // Get user information from the form
         $userId = $this->session->userdata('user_id');
-        $fullname = $this->io->post('fullname');
-        $email = $this->io->post('email');
-        $number = $this->io->post('number');
-        $compAdd = $this->io->post('compAdd');
-        $payment = isset($_POST['payment']) ? $this->io->post('payment') : '';
 
-        // Save purchase details
+        // Safely get form inputs
+        $fullname = isset($_POST['fullname']) ? $this->io->post('fullname') : '';
+        $email = isset($_POST['email']) ? $this->io->post('email') : '';
+        $number = isset($_POST['number']) ? $this->io->post('number') : '';
+        $compAdd = isset($_POST['compAdd']) ? $this->io->post('compAdd') : '';
+        $payment = isset($_POST['payment']) ? $this->io->post('payment') : '';
+        $discountCode = isset($_POST['discount_code']) ? $this->io->post('discount_code') : '';
+        $discounted_total = isset($_POST['discounted_total']) ? $this->io->post('discounted_total') : 0;
+
+        // Save purchase details including discount
         $purchaseData = [
             'user_id' => $userId,
             'fullname' => $fullname,
@@ -75,19 +79,27 @@ class MainController extends Controller
             'number' => $number,
             'payment' => $payment,
             'compAdd' => $compAdd,
-
+            'discount_code' => $discountCode,
+            'discounted_total' => $discounted_total
         ];
 
-        // model to insert purchase data into the database
         $purchaseId = $this->Users_model->insertPurchaseData($purchaseData);
-        echo "Purchase ID: $purchaseId";
 
-        // Retrieve cart data from the session
-        $data['cart'] = $this->Users_model->getcart($userId);
+        // Retrieve cart data
+        $cartItems = $this->Users_model->getcart($userId);
 
-        if (!empty($data['cart'])) {
-            foreach ($data['cart'] as $cartItem) {
+        if (!empty($cartItems)) {
+            // Calculate total cart price
+            $cartTotal = array_sum(array_map(fn($c) => $c['prize'] * $c['quantity'], $cartItems));
+
+            foreach ($cartItems as $cartItem) {
                 $itemTotal = $cartItem['prize'] * $cartItem['quantity'];
+
+                // Apply discount proportionally if provided
+                if ($discounted_total > 0 && $cartTotal > 0) {
+                    $itemTotal = ($itemTotal / $cartTotal) * $discounted_total;
+                }
+
                 $itemData = [
                     'Customer' => $fullname,
                     'CustomerId' => $userId,
@@ -99,7 +111,7 @@ class MainController extends Controller
                     'prize' => $cartItem['prize'],
                     'total_price' => $itemTotal,
                 ];
-                // Insert item data into the 'purchase_items' table
+
                 $this->db->table('purchase_items')->insert($itemData);
             }
 
@@ -108,10 +120,15 @@ class MainController extends Controller
 
             // Clear cart
             $this->Users_model->clearCart($userId);
+
+            $_SESSION['thankyou_total'] = $discounted_total > 0 ? $discounted_total : array_sum(array_map(fn($c) => $c['prize'] * $c['quantity'], $cartItems));
+            $_SESSION['thankyou_payment'] = $payment;
+
         }
 
         redirect('thankyou');
     }
+
 
     public function thankyou()
     {

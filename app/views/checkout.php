@@ -594,6 +594,166 @@
             margin-top: 20px;
             border-radius: 16px;
         }
+
+        /* Enhanced Discount Section */
+        .discount-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .discount-header {
+            background: linear-gradient(135deg, var(--primary), #0a5c0a);
+            color: white;
+            padding: 20px;
+            border-bottom: none;
+        }
+        
+        .discount-header h4 {
+            margin: 0;
+            font-weight: 600;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .discount-body {
+            padding: 25px;
+        }
+        
+        .discount-form {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .discount-input {
+            flex: 1;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: #f8f9fa;
+        }
+        
+        .discount-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(11, 61, 11, 0.1);
+            background: white;
+            outline: none;
+        }
+        
+        .discount-btn {
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            color: white;
+            font-weight: 600;
+            transition: var(--transition);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        
+        .discount-btn:hover {
+            background: #0a5c0a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(11, 61, 11, 0.3);
+        }
+        
+        .discount-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .discount-message {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .discount-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border-left: 4px solid #28a745;
+        }
+        
+        .discount-error {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .discount-codes {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed rgba(11, 61, 11, 0.2);
+        }
+        
+        .discount-codes-title {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .discount-tag {
+            display: inline-block;
+            background: rgba(11, 61, 11, 0.1);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .discount-applied {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .discount-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .discount-code-applied {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .discount-amount {
+            font-size: 0.9rem;
+            color: #28a745;
+        }
+        
+        .remove-discount {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        
+        .remove-discount:hover {
+            transform: scale(1.2);
+        }
     </style>
 </head>
 
@@ -703,6 +863,42 @@
                             </div>
                     </div>
                 </div>
+                                <!-- Discount Section -->
+                <div class="discount-section">
+                    <div class="discount-header">
+                        <h4 class="font-weight-semi-bold mb-0">Discount Code</h4>
+                    </div>
+                    <div class="discount-body">
+                        <div class="discount-form">
+                            <input type="text" class="discount-input" id="discount-code" placeholder="Enter discount code">
+                            <button type="button" class="discount-btn" id="apply-discount-btn">
+                                <i class="fas fa-tag mr-1"></i> Apply
+                            </button>
+                        </div>
+                        
+                        <div id="discount-message" class="discount-message"></div>
+                        
+                        <div id="discount-applied" class="discount-applied" style="display: none;">
+                            <div class="discount-details">
+                                <span class="discount-code-applied" id="applied-code"></span>
+                                <span class="discount-amount" id="discount-savings"></span>
+                            </div>
+                            <button type="button" class="remove-discount" id="remove-discount">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="discount-codes">
+                            <div class="discount-codes-title">Available discount codes:</div>
+                            <div>
+                                <span class="discount-tag">ONINGFLIP10 - 10% OFF</span>
+                                <span class="discount-tag">ONINGFLIP20 - 20% OFF</span>
+                                <span class="discount-tag">ONINGFLIP30 - 30% OFF</span>
+                                <span class="discount-tag">ONINGFLIP50 - 50% OFF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Order Summary & Payment Section -->
@@ -731,8 +927,9 @@
                         
                         <div class="summary-total">
                             <span class="total-label">Total Amount</span>
-                            <span class="total-value">₱<?= number_format($cartTotal, 2) ?></span>
+                            <span class="total-value" id="total-amount">₱<?= number_format($cartTotal, 2) ?></span>
                         </div>
+
                     </div>
                 </div>
 
@@ -747,11 +944,11 @@
                                 <i class="fas fa-money-bill-wave"></i>
                             </div>
                             <div>
+                                <input type="hidden" name="payment" id="payment_method_input" value="Cash on Delivery">
                                 <div class="payment-label">Cash on Delivery</div>
                                 <div class="payment-description">Pay when you receive your order</div>
                             </div>
                         </div>
-
 
                         <div class="payment-option" id="paypal-option">
                             <div class="payment-icon">
@@ -775,6 +972,10 @@
                         <button type="submit" class="place-order-btn">
                             <i class="fas fa-shopping-bag mr-2"></i>Place Order
                         </button>
+
+                        <input type="hidden" name="discount_code" id="discount_code_input">
+                        <input type="hidden" name="discounted_total" id="discounted_total_input">
+
                         </form>
                     </div>
                 </div>
@@ -833,6 +1034,20 @@
             const paymentOptions = document.querySelectorAll('.payment-option');
             const paypalButtonContainer = document.getElementById('paypal-button-container');
             const placeOrderBtn = document.querySelector('.place-order-btn');
+            const applyDiscountBtn = document.getElementById('apply-discount-btn');
+            const discountCodeInput = document.getElementById('discount-code');
+            const discountMessage = document.getElementById('discount-message');
+            const discountApplied = document.getElementById('discount-applied');
+            const appliedCode = document.getElementById('applied-code');
+            const discountSavings = document.getElementById('discount-savings');
+            const removeDiscountBtn = document.getElementById('remove-discount');
+            const totalAmountElement = document.getElementById('total-amount');
+            const discountCodeInputField = document.getElementById('discount_code_input');
+            const discountedTotalInput = document.getElementById('discounted_total_input');
+            
+            let originalTotal = <?= $cartTotal ?>;
+            let currentDiscount = 0;
+            let currentDiscountCode = '';
 
             function updatePaymentUI(selectedId) {
                 if (selectedId === 'paypal-option') {
@@ -851,20 +1066,111 @@
             }
 
             // Handle clicks
+            const paymentInput = document.getElementById('payment_method_input');
+
             paymentOptions.forEach(option => {
                 option.addEventListener('click', function() {
                     paymentOptions.forEach(opt => opt.classList.remove('selected'));
                     this.classList.add('selected');
                     updatePaymentUI(this.id);
+
+                    // Update hidden field
+                    if (this.id === 'cod-option') {
+                        paymentInput.value = 'Cash on Delivery';
+                    } else if (this.id === 'paypal-option') {
+                        paymentInput.value = 'PayPal';
+                    }
                 });
+            });
+
+            // Discount code functionality
+            applyDiscountBtn.addEventListener('click', function() {
+                const codeInput = discountCodeInput.value.trim().toUpperCase();
+                
+                // Discount codes
+                const discountCodes = {
+                    'ONINGFLIP10': 10,
+                    'ONINGFLIP20': 20,
+                    'ONINGFLIP30': 30,
+                    'ONINGFLIP50': 50
+                };
+
+                if (discountCodes[codeInput]) {
+                    currentDiscount = originalTotal * (discountCodes[codeInput] / 100);
+                    currentDiscountCode = codeInput;
+                    const newTotal = originalTotal - currentDiscount;
+                    
+                    // Update UI
+                    totalAmountElement.textContent = '₱' + newTotal.toFixed(2);
+                    appliedCode.textContent = codeInput;
+                    discountSavings.textContent = `You save ₱${currentDiscount.toFixed(2)} (${discountCodes[codeInput]}% off)`;
+                    
+                    // Show success message
+                    discountMessage.textContent = `Discount applied! You saved ₱${currentDiscount.toFixed(2)}`;
+                    discountMessage.className = 'discount-message discount-success';
+                    discountMessage.style.display = 'block';
+                    
+                    // Show applied discount section
+                    discountApplied.style.display = 'flex';
+                    
+                    // Update hidden form fields
+                    discountCodeInputField.value = currentDiscountCode;
+                    discountedTotalInput.value = newTotal.toFixed(2);
+                    
+                    // Clear input
+                    discountCodeInput.value = '';
+                    
+                    // Disable apply button temporarily
+                    applyDiscountBtn.disabled = true;
+                    setTimeout(() => {
+                        applyDiscountBtn.disabled = false;
+                    }, 2000);
+                } else {
+                    // Show error message
+                    discountMessage.textContent = 'Invalid discount code. Please try again.';
+                    discountMessage.className = 'discount-message discount-error';
+                    discountMessage.style.display = 'block';
+                }
+                
+                // Hide message after 5 seconds
+                setTimeout(() => {
+                    discountMessage.style.display = 'none';
+                }, 5000);
+            });
+
+            // Remove discount functionality
+            removeDiscountBtn.addEventListener('click', function() {
+                // Reset total
+                totalAmountElement.textContent = '₱' + originalTotal.toFixed(2);
+                
+                // Hide applied discount section
+                discountApplied.style.display = 'none';
+                
+                // Reset discount variables
+                currentDiscount = 0;
+                currentDiscountCode = '';
+                
+                // Clear hidden form fields
+                discountCodeInputField.value = '';
+                discountedTotalInput.value = '';
+                
+                // Show removal message
+                discountMessage.textContent = 'Discount removed';
+                discountMessage.className = 'discount-message discount-success';
+                discountMessage.style.display = 'block';
+                
+                setTimeout(() => {
+                    discountMessage.style.display = 'none';
+                }, 3000);
             });
 
             // Render PayPal button
             paypal.Buttons({
                 createOrder: function(data, actions) {
+                    let total = originalTotal - currentDiscount;
                     return actions.order.create({
                         purchase_units: [{
-                            amount: { value: '<?= $cartTotal; ?>' }
+                            amount: { value: total.toFixed(2) }
                         }]
                     });
                 },
@@ -875,10 +1181,19 @@
                         input.name = 'payment';
                         input.value = 'PayPal';
                         document.querySelector('form[action="/purchase"]').appendChild(input);
+
+                        // Add discount code to form
+                        const discountInput = document.createElement('input');
+                        discountInput.type = 'hidden';
+                        discountInput.name = 'discount_code';
+                        discountInput.value = currentDiscountCode;
+                        document.querySelector('form[action="/purchase"]').appendChild(discountInput);
+
                         document.querySelector('form[action="/purchase"]').submit();
                     });
                 }
             }).render('#paypal-button-container');
+
         });
 
         // Initialize the map
