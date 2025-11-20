@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
     <link href="public/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
@@ -584,6 +584,13 @@
                 padding: 20px;
             }
         }
+
+        #leaflet-map {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(11, 61, 11, 0.1);
+            margin-top: 20px;
+            border-radius: 16px;
+        }
     </style>
 </head>
 
@@ -602,20 +609,17 @@
             </div>
             <div class="col-lg-6 text-center text-lg-right">
                 <div class="d-inline-flex align-items-center">
-                    <a class="text-light px-2 social-icon" href="">
+                    <a class="text-light px-2 social-icon" href="https://www.facebook.com/share/1KJgUXNAGH/" target="_blank">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a class="text-light px-2 social-icon" href="">
+                    <a class="text-light px-2 social-icon" href="https://x.com/FlipOning?t=lRS_tEJgadi81WDS4gv9RQ&s=09" target="_blank">
                         <i class="fab fa-twitter"></i>
                     </a>
-                    <a class="text-light px-2 social-icon" href="">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a class="text-light px-2 social-icon" href="">
+                    <a class="text-light px-2 social-icon" href="https://www.instagram.com/oning.flip?igsh=ZTczczJmdHV4ZWoy" target="_blank">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a class="text-light pl-2 social-icon" href="">
-                        <i class="fab fa-youtube"></i>
+                    <a class="text-light px-2 social-icon" href="https://www.tiktok.com/@oning.flip?_r=1&_t=ZS-91X0ZoVgIuF" target="_blank">
+                        <i class="fab fa-tiktok"></i>
                     </a>
                 </div>
             </div>
@@ -764,6 +768,11 @@
                 <p class="mb-2"><i class="fa fa-phone mr-3"></i>0915 977 2091</p>
                 <p class="mb-0"><i class="fa fa-envelope mr-3"></i>oningflip@gmail.com</p>
             </div>
+
+            <div class="col-lg-8 col-md-12 mb-5">
+                <h5 class="text-light text-uppercase mb-4">Our Location</h5>
+                <div id="leaflet-map" style="width: 100%; height: 250px; border-radius: 16px; overflow: hidden;"></div>
+            </div>
         </div>
         <div class="row border-top mx-xl-5 py-4">
             <div class="col-md-6 px-xl-0 text-center text-md-left">
@@ -788,6 +797,28 @@
 
     <!-- Template Javascript -->
     <script src="public/js/main.js"></script>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+
+    <script>
+        // Initialize the map
+        var map = L.map('leaflet-map').setView([14.687477150942854, 121.03619090914154], 16);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add a marker
+        var marker = L.marker([14.687477150942854, 121.03619090914154]).addTo(map)
+            .bindPopup('<b>ONING FLIP</b><br>Greenville Drive, Quezon City')
+            .openPopup();
+    </script>
+</body>
 </body>
 
 </html>

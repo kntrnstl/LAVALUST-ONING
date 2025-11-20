@@ -16,13 +16,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
     <link href="public/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="public/css/style.css" rel="stylesheet">
+
+    <script src="https://www.paypal.com/sdk/js?client-id=AQJQxRBcqC4d6LYcgn4qYSFmmDrLmZjfv33iwX_ejk7Me3CmKvMabBrrT2PcslSBzcWTrrSvUl-A4X9l&currency=PHP"></script>
 
     <style>
         /* Modern Design Variables */
@@ -585,6 +587,13 @@
                 padding: 20px;
             }
         }
+
+        #leaflet-map {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(11, 61, 11, 0.1);
+            margin-top: 20px;
+            border-radius: 16px;
+        }
     </style>
 </head>
 
@@ -603,20 +612,17 @@
             </div>
             <div class="col-lg-6 text-center text-lg-right">
                 <div class="d-inline-flex align-items-center">
-                    <a class="text-light px-2 social-icon" href="">
+                    <a class="text-light px-2 social-icon" href="https://www.facebook.com/share/1KJgUXNAGH/" target="_blank">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a class="text-light px-2 social-icon" href="">
+                    <a class="text-light px-2 social-icon" href="https://x.com/FlipOning?t=lRS_tEJgadi81WDS4gv9RQ&s=09" target="_blank">
                         <i class="fab fa-twitter"></i>
                     </a>
-                    <a class="text-light px-2 social-icon" href="">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a class="text-light px-2 social-icon" href="">
+                    <a class="text-light px-2 social-icon" href="https://www.instagram.com/oning.flip?igsh=ZTczczJmdHV4ZWoy" target="_blank">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a class="text-light pl-2 social-icon" href="">
-                        <i class="fab fa-youtube"></i>
+                    <a class="text-light px-2 social-icon" href="https://www.tiktok.com/@oning.flip?_r=1&_t=ZS-91X0ZoVgIuF" target="_blank">
+                        <i class="fab fa-tiktok"></i>
                     </a>
                 </div>
             </div>
@@ -736,16 +742,30 @@
                         <h4 class="font-weight-semi-bold m-0">Payment Method</h4>
                     </div>
                     <div class="payment-body">
-                        <div class="payment-option selected">
+<div class="payment-option selected" id="cod-option">
+    <div class="payment-icon">
+        <i class="fas fa-money-bill-wave"></i>
+    </div>
+    <div>
+        <div class="payment-label">Cash on Delivery</div>
+        <div class="payment-description">Pay when you receive your order</div>
+    </div>
+</div>
+
+
+                        <div class="payment-option" id="paypal-option">
                             <div class="payment-icon">
-                                <i class="fas fa-money-bill-wave"></i>
+                                <i class="fab fa-paypal"></i>
                             </div>
-                            <!-- cash on delivery -->
                             <div>
-                                <div class="payment-label">Cash on Delivery</div>
-                                <div class="payment-description">Pay when you receive your order</div>
+                                <div class="payment-label">PayPal</div>
+                                <div class="payment-description">Pay securely using PayPal</div>
                             </div>
                         </div>
+
+                        <!-- Container for PayPal button -->
+                        <div id="paypal-button-container" style="margin-top: 15px; display: none;"></div>
+
                         
                         <div class="security-notice">
                             <i class="fas fa-shield-alt"></i>
@@ -772,6 +792,11 @@
                 <p class="mb-2"><i class="fa fa-phone mr-3"></i>0915 977 2091</p>
                 <p class="mb-0"><i class="fa fa-envelope mr-3"></i>oningflip@gmail.com</p>
             </div>
+
+            <div class="col-lg-8 col-md-12 mb-5">
+                <h5 class="text-light text-uppercase mb-4">Our Location</h5>
+                <div id="leaflet-map" style="width: 100%; height: 250px; border-radius: 16px; overflow: hidden;"></div>
+            </div>
         </div>
         <div class="row border-top mx-xl-5 py-4">
             <div class="col-md-6 px-xl-0 text-center text-md-left">
@@ -797,20 +822,77 @@
     <!-- Template Javascript -->
     <script src="public/js/main.js"></script>
 
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+
     <script>
-        // Add interactivity to payment options
         document.addEventListener('DOMContentLoaded', function() {
             const paymentOptions = document.querySelectorAll('.payment-option');
-            
+            const paypalButtonContainer = document.getElementById('paypal-button-container');
+            const placeOrderBtn = document.querySelector('.place-order-btn');
+
+            function updatePaymentUI(selectedId) {
+                if (selectedId === 'paypal-option') {
+                    paypalButtonContainer.style.display = 'block';
+                    placeOrderBtn.style.display = 'none';
+                } else {
+                    paypalButtonContainer.style.display = 'none';
+                    placeOrderBtn.style.display = 'block';
+                }
+            }
+
+            // Set initial state based on the selected option
+            const initialSelected = document.querySelector('.payment-option.selected');
+            if (initialSelected) {
+                updatePaymentUI(initialSelected.id);
+            }
+
+            // Handle clicks
             paymentOptions.forEach(option => {
                 option.addEventListener('click', function() {
-                    // Remove selected class from all options
                     paymentOptions.forEach(opt => opt.classList.remove('selected'));
-                    // Add selected class to clicked option
                     this.classList.add('selected');
+                    updatePaymentUI(this.id);
                 });
             });
+
+            // Render PayPal button
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: { value: '<?= $cartTotal; ?>' }
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'payment';
+                        input.value = 'PayPal';
+                        document.querySelector('form[action="/purchase"]').appendChild(input);
+                        document.querySelector('form[action="/purchase"]').submit();
+                    });
+                }
+            }).render('#paypal-button-container');
         });
+
+        // Initialize the map
+        var map = L.map('leaflet-map').setView([14.687477150942854, 121.03619090914154], 16);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add a marker
+        var marker = L.marker([14.687477150942854, 121.03619090914154]).addTo(map)
+            .bindPopup('<b>ONING FLIP</b><br>Greenville Drive, Quezon City')
+            .openPopup();
     </script>
 </body>
 </html>

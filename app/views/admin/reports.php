@@ -468,14 +468,37 @@
                 </table>
               </div>
 
-                            <!-- Action Buttons -->
-              <div class="d-flex gap-3 mt-4 flex-wrap">
+              <!-- Action Buttons -->
+              <div class="d-flex flex-column mt-4 gap-2">
+
+                <!-- Row for buttons -->
+                <div class="d-flex gap-2 flex-wrap">
                   <button id="showItemsBtn" class="btn-green">Show Purchase Items</button>
                   <button class="btn-green" type="button" onclick="printPage()">
-                      <i class="bi bi-printer me-2"></i>Print Report
+                    <i class="bi bi-printer me-2"></i>Print Report
                   </button>
-              </div> 
-              
+                </div>
+
+                <!-- Filter Dropdown under "Show Purchase Items" -->
+                <div id="filterContainer" style="display:none; margin-top:5px;">
+                  <label for="periodSelect" style="font-weight:600; margin-right:10px;">Filter by:</label>
+                  <select id="periodSelect" style="
+                      padding: 8px 12px; 
+                      border-radius: 8px; 
+                      border: 1px solid #145214; 
+                      background-color: #e8f5e8; 
+                      color: #145214;
+                      font-weight:500;
+                  ">
+                    <option value="today">Today</option>
+                    <option value="weekly">This Week</option>
+                    <option value="monthly">This Month</option>
+                    <option value="yearly">This Year</option>
+                    <option value="overall">Overall</option>
+                  </select>
+                </div>
+              </div>
+       
               <div id="purchaseItemsTable" style="display:none; margin-top:20px;">
                 <?php
                 $total_sales = 0;
@@ -497,25 +520,37 @@
                               <th>Order Date</th>
                           </tr>
                       </thead>
-                      <tbody>
-                        <?php foreach($purchase_items as $item): ?>
-                        <tr>
-                            <td><?= $item['id'] ?></td>
-                            <td><?= $item['Item_name'] ?></td>
-                            <td><?= $item['Customer'] ?></td>
-                            <td><?= $item['quantity'] ?></td>
-                            <td>₱<?= number_format($item['prize'],2) ?></td>
-                            <td>₱<?= number_format($item['total_price'],2) ?></td>
-                            <td><?= $item['status'] ?></td>
-                            <td><?= $item['order_at'] ?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                        <!-- Total row -->
-                        <tr style="font-weight:bold; background-color:#e8f5e8;">
-                            <td colspan="5" style="text-align:right;">Total Sales:</td>
-                            <td>₱<?= number_format($total_sales, 2) ?></td>
-                            <td colspan="2"></td>
-                        </tr>
+                    <tbody>
+                      <?php foreach($purchase_items as $item): 
+                          $orderDate = strtotime($item['order_at']);
+                          $todayDate = strtotime(date('Y-m-d'));
+                          $weekStart = strtotime('monday this week');
+                          $monthStart = strtotime(date('Y-m-01'));
+                          $yearStart = strtotime(date('Y-01-01'));
+                          
+                          $periods = [];
+                          if (date('Y-m-d', $orderDate) == date('Y-m-d', $todayDate)) $periods[] = 'today';
+                          if ($orderDate >= $weekStart) $periods[] = 'weekly';
+                          if ($orderDate >= $monthStart) $periods[] = 'monthly';
+                          if ($orderDate >= $yearStart) $periods[] = 'yearly';
+                          $periods[] = 'overall';
+                      ?>
+                      <tr data-period="<?= implode(' ', $periods) ?>">
+                          <td><?= $item['id'] ?></td>
+                          <td><?= $item['Item_name'] ?></td>
+                          <td><?= $item['Customer'] ?></td>
+                          <td><?= $item['quantity'] ?></td>
+                          <td>₱<?= number_format($item['prize'],2) ?></td>
+                          <td>₱<?= number_format($item['total_price'],2) ?></td>
+                          <td><?= $item['status'] ?></td>
+                          <td><?= $item['order_at'] ?></td>
+                      </tr>
+                      <?php endforeach; ?>
+                      <tr class="total-row" style="font-weight:bold; background-color:#e8f5e8;">
+                          <td colspan="5" style="text-align:right;">Total Sales:</td>
+                          <td>₱0.00</td>
+                          <td colspan="2"></td>
+                      </tr>
                     </tbody>
 
                   </table>
@@ -537,57 +572,98 @@
   </main>
 
 <script>
-  // Toggle purchase items table visibility
-  document.getElementById('showItemsBtn').addEventListener('click', function() {
-      let table = document.getElementById('purchaseItemsTable');
-      table.style.display = table.style.display === 'none' ? 'block' : 'none';
+  const showBtn = document.getElementById('showItemsBtn');
+  const filterContainer = document.getElementById('filterContainer');
+  const periodSelect = document.getElementById('periodSelect');
+  const table = document.getElementById('purchaseItemsTable');
+
+  // Toggle table and filter visibility
+  showBtn.addEventListener('click', function() {
+      const isHidden = table.style.display === 'none';
+      table.style.display = isHidden ? 'block' : 'none';
+      filterContainer.style.display = isHidden ? 'block' : 'none';
+
+      if(isHidden) filterTable(); // apply filter when table is shown
   });
 
+  // Filter table based on dropdown
+  function filterTable() {
+      const period = periodSelect.value;
+      const rows = table.querySelectorAll('tbody tr');
+      let totalSales = 0;
+
+      rows.forEach(row => {
+          if (row.classList.contains('total-row')) return;
+
+          const periods = row.getAttribute('data-period').split(' ');
+          if (periods.includes(period)) {
+              row.style.display = 'table-row';
+              totalSales += parseFloat(row.cells[5].innerText.replace(/[^0-9.-]+/g,""));
+          } else {
+              row.style.display = 'none';
+          }
+      });
+
+      // Update total sales row
+      const totalRow = table.querySelector('tbody tr.total-row');
+      if (totalRow) {
+          totalRow.cells[1].innerText = `₱${totalSales.toFixed(2)}`;
+      }
+  }
+
+  // Listen to dropdown change
+  periodSelect.addEventListener('change', filterTable);
+
+  // Initial filter
+  filterTable();
+
+
+
   // Print purchase items table
-function printPage() {
-    const table = document.getElementById('purchaseItemsTable');
+  function printPage() {
+      const tableClone = table.cloneNode(true);
 
-    // Temporarily show table if hidden
-    const wasHidden = table.style.display === 'none';
-    if (wasHidden) table.style.display = 'block';
+      // Remove hidden rows from clone
+      tableClone.querySelectorAll('tbody tr').forEach(row => {
+          if (row.style.display === 'none') row.remove();
+      });
 
-    const tableHTML = table.outerHTML;
+      // Get selected period text
+      const periodText = periodSelect.options[periodSelect.selectedIndex].text;
 
-    const printWindow = window.open('', '_blank');
+      // Get current date in readable format
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+      });
 
-    const styles = `
-        <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            h2 { text-align: center; }
-            table { width: 100%; border-collapse: collapse; font-size: 12px; }
-            th, td { border: 1px solid #000; padding: 5px; text-align: center; }
-            th { background-color: #e8f5e8; color: #145214; font-weight: 600; }
-            @media print {
-                body { margin: 0; }
-                table { page-break-inside: auto; }
-                tr    { page-break-inside: avoid; page-break-after: auto; }
-            }
-        </style>
-    `;
+      const printWindow = window.open('', '_blank');
 
-    printWindow.document.open();
-    printWindow.document.write(`<html><head><title>Purchase Items Report</title>${styles}</head><body>`);
-    printWindow.document.write(`<h2>Purchase Items Report</h2>`);
-    printWindow.document.write(tableHTML);
-    printWindow.document.write(`</body></html>`);
-    printWindow.document.close();
+      const styles = `
+          <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              h2, h4 { text-align: center; margin-bottom: 10px; }
+              table { width: 100%; border-collapse: collapse; font-size: 12px; }
+              th, td { border: 1px solid #000; padding: 5px; text-align: center; }
+              th { background-color: #e8f5e8; color: #145214; font-weight: 600; }
+          </style>
+      `;
 
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+      printWindow.document.open();
+      printWindow.document.write(`<html><head><title>Purchase Items Report</title>${styles}</head><body>`);
+      printWindow.document.write(`<h2>Purchase Items Report - ${periodText}</h2>`);
+      printWindow.document.write(`<h4>Date: ${formattedDate}</h4>`); // <-- Added date here
+      printWindow.document.write(tableClone.outerHTML);
+      printWindow.document.write(`</body></html>`);
+      printWindow.document.close();
 
-    // Hide table again if it was hidden
-    if (wasHidden) table.style.display = 'none';
-}
-
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+  }
 </script>
-
-
 
   <?php include('chop/script.php'); ?>
 </body>
