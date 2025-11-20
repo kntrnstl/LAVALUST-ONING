@@ -244,8 +244,8 @@
     border-left: 4px solid var(--primary-green);
   }
 
-  .summary-card.categories {
-    border-left: 4px solid #0d6efd;
+ .summary-card.categories {
+    border-left: 4px solid #1a365d;
   }
 
   /* Responsive adjustments */
@@ -289,7 +289,7 @@
         </div>
       </div>
       <div class="col-md-4">
-        <div class="summary-card">
+        <div class="summary-card categories">
           <div class="number">
             <?php
               $categories = array_unique(array_column($prod, 'category'));

@@ -918,7 +918,7 @@
     <!-- Template Javascript -->
     <script src="public/js/main.js"></script>
 
-        <!-- Leaflet CSS -->
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
